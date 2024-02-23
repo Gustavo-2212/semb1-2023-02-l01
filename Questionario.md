@@ -63,7 +63,8 @@ As **regras implícitas**, de modo semelhante, indicam como atualizar ou criar o
 
 ### (a) Explique o conjunto de instruções ***Thumb*** e suas principais vantagens na arquitetura ARM. Como o conjunto de instruções ***Thumb*** opera em conjunto com o conjunto de instruções ARM?
 
-
+> O conjunto de instruções **Thumb** são um conjunto de instruções de 16 bits de tamanho, que são encontrados, principalmente, nos processadores Cortex da linha/família M. As vantagens são que o tamanho do código na Flash é reduzido, maior eficiência energética e a performance não é tão diferente dos outro microprocessadores Thumb-2 ou 32b, no geral, recuperar instruções menores da memória é mais rápido.\
+O conjunto de instruções também Thumb e ARM podem ser chaveados dependendo do código sendo executado. E determinado código de instruções de 16b o modo Thumb é utilizado, caso o código esteja usando instruções ARM (32b) tal modo é selecionado (flag T do resgistrator de STATUS).
 
 ### (b) Explique as diferenças entre as arquiteturas ***ARM Load/Store*** e ***Register/Register***.
 
@@ -71,11 +72,20 @@ As **regras implícitas**, de modo semelhante, indicam como atualizar ou criar o
 
 ### (c) Os processadores **ARM Cortex-M** oferecem diversos recursos que podem ser explorados por sistemas baseados em **RTOS** (***Real Time Operating Systems***). Por exemplo, a separação da execução do código em níveis de acesso e diferentes modos de operação. Explique detalhadamente como funciona os níveis de acesso de execução de código e os modos de operação nos processadores **ARM Cortex-M**.
 
-
+> Os processadores ARM Cortex-M são encontrados em um dos dois estados a seguir:\
+    **(1)** Um estado de Debug, onde o processador é suspenso para depuração;\
+    **(2)** Um estado de execução de código, chamado de **Thumb**.\
+Nesse estado de execução de código, o processador pode estar sendo operado em dois modos distintos, denominados **Handler** e **Thread**.\
+O modo Handler é uma maneira de execução de código para tratamento de interrupções, onde um acesso priveligiado aos recursos do sistema é disponibilizado. Nesse modo registrador principal do ponteiro para a stack é utilizado (MSP);\
+Já o modo Thread é para execução normal do código, podendo ser em executado em um nível priveligiado ou não. Sempre na inicialização do processador, o mod Thread com privilégios é usado, podendo ser trocado para sem privilégios via software ou via retorno do tratamento da interrupção. No modo Thread sem privilégios o registrador que aponta para a stack utilizado é o PSP.\
+No exemplo citado, o RTOS é operado no modo privilegiado do Thread.
 
 ### (d) Explique como os processadores ARM tratam as exceções e as interrupções. Quais são os diferentes tipos de exceção e como elas são priorizadas? Descreva a estratégia de **group priority** e **sub-priority** presente nesse processo.
 
-
+> Os processadores ARM tratam as exceções e interrupções com NVIC (Controlador de Vetores de Interrupção Aninhados), que divide as exceções em exceções de fato (interrupções associadas ao processador), interrupções (exceções associadas à periféricos) e falhas (exceções associadas ao processador, porém de carácter grave - acessos indevidos a memória, por exemplo).\
+As interrupções são controladas através de níveis de prioridade, sendo que os níveis de menores valores são mais prioritários que os níveis de valores maiores (-1 é mais prioritário que 1). É possível fazer a divisão das interrupções em níveis de prioridade e sub-prioridade, podendo categorizar interrupções de carácter semelhantes em um mesmo grupo, diferenciando-as pela sub-prioridade, e os grupos de interrupções diferenciados pela prioridade.\
+Também é possível dividir as interrupções em níveis de preempção, que diz respeito a possibilidade de uma interrupção interromper outra que está no estado de ativa (sendo tratada pelo processador).\
+No cortex, 256 níveis de prioridade são disponibilizadas, sendo que os 16 primeiros níveis são relacionados ao processador e os níveis restantes são para o usuário. Temos também até 128 níveis de preempção.
 
 ### (e) Qual a diferença entre os registradores **CPSR** (***Current Program Status Register***) e **SPSR** (***Saved Program Status Register***)?
 
@@ -91,7 +101,8 @@ As **regras implícitas**, de modo semelhante, indicam como atualizar ou criar o
 
 ### (h) O que é a tabela de vetores de interrupção?
 
-
+> A tabela de vetores de interrupção é espaço na memória que contém os endereços dos códigos que tratam as interrupções que podem ser geradas no microprocessador Cortex M.\
+Cada valor desse vetor aponta para uma rotina de tratamento de uma interrupção diferente; alguns valores não são implementadas (depende da arquitetura) e o primeiro valor desse vetor sempre contém o endereço do STACK POINTER, para onde o ponteiro da pilha apontará (FINAL DA SRAM).
 
 ### (i) Qual a finalidade do NVIC (**Nested Vectored Interrupt Controller**) nos microcontroladores ARM e como ele pode ser utilizado em aplicações de tempo real?
 

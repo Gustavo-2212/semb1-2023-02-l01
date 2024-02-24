@@ -4,7 +4,7 @@ RM = rm -rf
 OBJDIR = build
 DEPDIR = .deps
 
-CFLAGS   = -g -mcpu=cortex-m4 -mthumb -O0 -Wall
+CFLAGS   = -g -mcpu=cortex-m4 -mthumb -O0 -Wall -I./inc
 DEPFLAGS = -MMD -MP -MF $(DEPDIR)/$*.d
 
 SRCS = startup.c main.c
@@ -19,7 +19,7 @@ $(shell mkdir -p $(dir $(DEPS)) > /dev/null)
 .PHONY: all
 all: $(OBJS)
 
-$(OBJDIR)/%.o: %.c $(DEPDIR)/%.d
+$(OBJDIR)/%.o: src/%.c $(DEPDIR)/%.d
 	$(CC) -c $(CFLAGS) $(DEPFLAGS) $< -o $@
 
 $(DEPS):
